@@ -60,25 +60,12 @@ class Sheep extends Animal{
 
 //класс нашей фермы
 class Farm{
+
     //массив данных видов животных
-    private $barn = [
-        'Cow' => [],
-        'Chicken' => [],
-    ];
+    private $barn = array();
     private $result;
-    // создание начального количества животных в хлеву
-    function __construct()
-    {
-        for ($i = 0; $i < 10; $i++) { 
-            $this->RegistrationAnimal(new Cow);
-        }
-        for ($i = 0; $i < 20; $i++) { 
-            $this->RegistrationAnimal(new Chicken);
-        }
-    }
     // Метод Добавления животных
     public function RegistrationAnimal($animal){
-        //var_dump($animal);
         array_push($this->barn[$animal->getNameOfClass()], $animal);
     }
     //Метод подсчета животных
@@ -91,11 +78,13 @@ class Farm{
 
     //Метод сбора продукции и вывода количества продукции 
     public function GetProductionOnWeek(){
+
         echo PHP_EOL . "Производим сбор продукции".PHP_EOL;
         //подсчет продукции за неделю
         for ($i=0; $i < 7; $i++) { 
             $this->GetProductionOnDay();
         }
+
         echo "Произведенная продукция за неделю(по категориям): ". PHP_EOL;
         //вывод проиведенной продукции по продуктам
         foreach ($this->result as $type => $count) {
@@ -130,9 +119,18 @@ class Farm{
 }
 
 echo PHP_EOL."Cимулятор деревенской жизни". PHP_EOL. PHP_EOL;
+
 //наша ферма 
 $farm = new Farm();
 
+$farm->addAnimal(new Cow);
+for ($i = 0; $i < 10; $i++) { 
+    $farm->RegistrationAnimal(new Cow);
+}
+$farm->AddAnimal(new Chicken);
+for ($i = 0; $i < 20; $i++) { 
+    $farm->RegistrationAnimal(new Chicken);
+}
 /////////////////////////
 /*
 $farm->AddAnimal(new Sheep);

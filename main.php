@@ -7,6 +7,10 @@ class Animal{
     public $idAnimal = 0;
     public $product;
     protected function GetProduct(){}
+    public function getNameOfClass()
+    {
+        return static::class;
+    }
 }
 //Дочерний класс коровы 
 class Cow extends Animal{
@@ -38,48 +42,45 @@ class Chicken extends Animal{
         return rand(0,1);
     }
 }
-//создание нового объекта животкного по имени группы
-function createAnimal($name){
-    switch ($name) {
-        case 'Коровы':
-            return new Cow();
-            break;
-        case 'Куры':
-            return new Chicken();
-            break;
-        /*
-        *   добавить сюда новый case с названием животного 
-        *   с генирацией соответсвующего класса этого животного
-        */
-        default:
-            break;
+/*
+class Sheep extends Animal{
+    function __construct()
+    {
+        //задание уникального идентификатора
+        $this->idAnimal = parent::$id++;
+        // определение типа продукта
+        $this->product = "Шерсть";
     }
-}
+    //выроботка продукции
+    function GetProduct()
+    {
+        return rand(5,10);
+    }
+}*/
+
 //класс нашей фермы
 class Farm{
     //массив данных видов животных
     private $barn = [
-        'Коровы' => [],
-        'Куры' => [],
+        'Cow' => [],
+        'Chicken' => [],
     ];
     private $result;
-
     // создание начального количества животных в хлеву
     function __construct()
     {
         for ($i = 0; $i < 10; $i++) { 
-            $this->RegistrationAnimal('Коровы');
+            $this->RegistrationAnimal(new Cow);
         }
         for ($i = 0; $i < 20; $i++) { 
-            $this->RegistrationAnimal('Куры');
+            $this->RegistrationAnimal(new Chicken);
         }
     }
-
     // Метод Добавления животных
-    public function RegistrationAnimal($name){
-        array_push($this->barn[$name], createAnimal($name));
+    public function RegistrationAnimal($animal){
+        //var_dump($animal);
+        array_push($this->barn[$animal->getNameOfClass()], $animal);
     }
-
     //Метод подсчета животных
     public function CountAnimals(){
         echo "Количество животных по категориям: " . PHP_EOL;
@@ -103,28 +104,19 @@ class Farm{
        
     }
     //  Метод добавления нового вида животных
-    public function AddAnimal($name){
-        $this->barn[$name] = array();
-    }
-
-    //получаю все виды продукции животных из массива хлева 
-    private function GetTypeProduct(){
-        $sum = array();
-        foreach($this->barn as $name => $animal)
-        {
-            $sum += [$animal[0]->product => 0];
-        }
-        return $sum;
+    public function AddAnimal($animal){
+        $this->barn[$animal->getNameOfClass()] = array();
     }
     public function GetProductionOnDay(){
+
         //Получение асоциативного массива с значениями продуктов для подсчета их в течении недели
-        $this->result = $this->GetTypeProduct();
         //подсчет продукции за один день
         foreach ($this->barn as $nameanimal => $value) {
             //определяем тип продукта текущих животных
             $type = $value[0]->product;
             $sum = 0;
-
+            //в цикле заношу новый тип продукта
+            $this->result[$type] = $sum;
             //подсчет продукции по всем животным определенного типа
             foreach ($value as $animal) {
 
@@ -136,9 +128,19 @@ class Farm{
 
     }
 }
+
 echo PHP_EOL."Cимулятор деревенской жизни". PHP_EOL. PHP_EOL;
 //наша ферма 
 $farm = new Farm();
+
+/////////////////////////
+/*
+$farm->AddAnimal(new Sheep);
+for ($i=0; $i < 10; $i++) { 
+    $farm->RegistrationAnimal(new Sheep);
+}
+*/
+/////////////////////
 
 //в хлеве 10 коров и 20 кур
 $farm->CountAnimals();
@@ -147,12 +149,10 @@ $farm->CountAnimals();
 $farm->GetProductionOnWeek();
 
 echo PHP_EOL."съездили на рынок, купили животных".PHP_EOL;
-
-for ($i = 0; $i < 5; $i++) { 
-    $farm->RegistrationAnimal('Куры');
+for ($i = 0; $i < 5; $i++){ 
+    $farm->RegistrationAnimal(new Chicken);
 }
-
-$farm->RegistrationAnimal('Коровы');
+$farm->RegistrationAnimal(new Cow);
 
 $farm->CountAnimals();
 
